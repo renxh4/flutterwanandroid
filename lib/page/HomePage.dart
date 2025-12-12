@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 
 import '../controller/HomeController.dart';
 import '../l10n/app_localizations.dart';
+import '../model/HttpBinGetResponse.dart';
+import '../network/ApiMainService.dart';
 import 'PageView.dart';
 
 class HomePage extends StatefulWidget {
@@ -57,7 +59,24 @@ class _HomePageState extends State<HomePage> {
             onTap: _onNavTapped,
           )),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          print("点击了图标按钮111");
+          //简单网络连通性测试：调用 httpbin 的 GET 接口
+          try {
+            final api = ApiMainService('https://httpbin.org');
+            final HttpBinGetResponse resp = await api.pingGetModel();
+            print("网络连通成功: url121=${resp.url}");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("网络连通成功: ${resp.url}")),
+            );
+          } catch (e) {
+            print("网络异常: $e");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("网络异常: $e")),
+            );
+          }
+
+        },
         child: const Icon(Icons.add),
       ),
       body: PageViewWidget(
@@ -91,7 +110,7 @@ class MyDrawer extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: ClipOval(
                       child: Image.asset(
-                        "images/icon_resolution_ratio.png",
+                        "assets/image/icon_resolution_ratio.png",
                         width: 80,
                       ),
                     ),
