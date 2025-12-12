@@ -1,28 +1,33 @@
 
 import 'package:flutter/material.dart';
 
-class PageViewWidget extends StatefulWidget {
-  @override
-  _PageViewWidgetState createState() => _PageViewWidgetState();
-}
+class PageViewWidget extends StatelessWidget {
+  const PageViewWidget({
+    super.key,
+    required this.controller,
+    required this.onPageChanged,
+  });
 
-class _PageViewWidgetState extends State<PageViewWidget> {
+  final PageController controller;
+  final ValueChanged<int> onPageChanged;
+
   @override
   Widget build(BuildContext context) {
-    return PageView.builder(
-      itemCount: 3,
-      itemBuilder: (context, index) => Container(
-        color: Colors.red,
-        padding: EdgeInsets.all(10.0),
-        child: Center(child: Text("$index")),
-      ),
+    return PageView(
+      controller: controller,
+      onPageChanged: onPageChanged,
+      children: const <Widget>[
+        _SimplePage(text: '首页'),
+        _SimplePage(text: '业务'),
+        _SimplePage(text: '学校'),
+      ],
     );
   }
 }
 
 
-class Page extends StatelessWidget{
-  const Page({
+class _SimplePage extends StatelessWidget{
+  const _SimplePage({
     Key? key,
     required this.text
   }) : super(key: key);

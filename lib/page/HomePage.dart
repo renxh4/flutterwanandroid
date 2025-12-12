@@ -6,8 +6,37 @@ import '../controller/HomeController.dart';
 import '../l10n/app_localizations.dart';
 import 'PageView.dart';
 
-class HomePage extends GetView<HomeController> {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late final HomeController controller = Get.find<HomeController>();
+  final PageController _pageController = PageController();
+
+  void _onNavTapped(int index) {
+    if (index == controller.selectedIndex.value) return;
+    controller.selectedIndex.value = index;
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _onPageChanged(int index) {
+    if (index == controller.selectedIndex.value) return;
+    controller.selectedIndex.value = index;
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,22 +47,23 @@ class HomePage extends GetView<HomeController> {
       ),
       drawer: MyDrawer(),
       bottomNavigationBar: Obx(() => BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "首页"),
-          BottomNavigationBarItem(icon: Icon(Icons.business), label: "业务"),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: "学校"),
-        ],
-        currentIndex: controller.selectedIndex.value,
-        fixedColor: Colors.blue,
-        onTap: (index) {
-          controller.selectedIndex.value = index;
-        },
-      )),
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: "首页"),
+              BottomNavigationBarItem(icon: Icon(Icons.business), label: "业务"),
+              BottomNavigationBarItem(icon: Icon(Icons.school), label: "学校"),
+            ],
+            currentIndex: controller.selectedIndex.value,
+            fixedColor: Colors.blue,
+            onTap: _onNavTapped,
+          )),
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
-      body: PageViewWidget(),
+      body: PageViewWidget(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+      ),
     );
   }
 
