@@ -10,11 +10,12 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
+import 'GlobalConfig.dart';
 import 'controller/TestController.dart';
 import 'l10n/app_localizations.dart';
 
 void main() {
-  runApp(const MyApp());
+  GlobalConfig.init().then((value) => runApp(const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
