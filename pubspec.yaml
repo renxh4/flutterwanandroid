@@ -16,6 +16,14 @@ dependencies:
 
   intl: any
 
+  # 网络请求
+  retrofit: 4.8.0
+  dio: ^5.0.0
+  json_annotation: ^4.8.0
+  build_runner: ^2.3.0
+  json_serializable: ^6.6.1
+  retrofit_generator: ^8.2.1
+
 
 dev_dependencies:
   flutter_test:

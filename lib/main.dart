@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutterwanandroid/model/HttpBinGetResponse.dart';
+import 'package:flutterwanandroid/network/ApiMainService.dart';
 
 import 'l10n/app_localizations.dart';
 
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
       ],
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: MyHomePage(),
     );
@@ -71,7 +73,24 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed:  () async {
+          print("点击了图标按钮111");
+          //简单网络连通性测试：调用 httpbin 的 GET 接口
+          try {
+            final api = ApiMainService('https://httpbin.org');
+            final HttpBinGetResponse resp = await api.pingGetModel();
+            print("网络连通成功: url121=${resp.url}");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("网络连通成功: ${resp.url}")),
+            );
+          } catch (e) {
+            print("网络异常: $e");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("网络异常: $e")),
+            );
+          }
+
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
