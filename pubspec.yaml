@@ -24,6 +24,10 @@ dependencies:
   json_serializable: ^6.6.1
   retrofit_generator: ^8.2.1
 
+  # getx
+  get: ^4.6.6
+
+
 
 dev_dependencies:
   flutter_test:
