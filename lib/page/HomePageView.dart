@@ -40,11 +40,28 @@ class _HomePageViewState extends State<HomePageView> {
                 itemBuilder: (context, index) => SizedBox(
                   width: double.infinity,
                   height: double.infinity,
-                  child: Image.network(
-                    homeController.bannerList[index].imagePath ?? "",
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.cover,
+                  child: Stack(
+                    children: [
+                      Image.network(
+                        homeController.bannerList[index].imagePath ?? "",
+                        width: double.infinity,
+                        height: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          color: Colors.black.withOpacity(0.5),
+                          child: Text(
+                            homeController.bannerList[index].title ?? "",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
