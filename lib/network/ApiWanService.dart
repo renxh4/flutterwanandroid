@@ -4,7 +4,9 @@ import 'package:flutterwanandroid/model/HttpBinGetResponse.dart';
 import 'package:flutterwanandroid/network/BaseDio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../model/ArticleResponse.dart';
 import '../model/BannerResponse.dart';
+import '../model/article_models.dart';
 
 part 'ApiWanService.g.dart';
 
@@ -19,6 +21,10 @@ abstract class ApiWanService {
 
   @GET("/banner/json")
   Future<BannerResponse> banner();
+
+
+  @GET("/article/list/0/json")
+  Future<ArticleListResponse> getArticleList();
 
 }
 

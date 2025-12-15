@@ -17,4 +17,11 @@ class HomeController extends GetxController {
     bannerList.value = response.data ?? [];
   }
 
+  void getArticleList() async {
+    var response = await ApiWanService.instance.getArticleList();
+    response.data?.datas?.forEach((element) {
+      print(element.title);
+    });
+  }
+
 }

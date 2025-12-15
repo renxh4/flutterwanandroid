@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -38,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     controller.getBanner();
+    controller.getArticleList();
   }
 
   @override
@@ -54,36 +54,17 @@ class _HomePageState extends State<HomePage> {
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.share))],
       ),
       drawer: MyDrawer(),
-      bottomNavigationBar: Obx(() => BottomNavigationBar(
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "首页"),
-              BottomNavigationBarItem(icon: Icon(Icons.business), label: "问答"),
-              BottomNavigationBarItem(icon: Icon(Icons.school), label: "公众号"),
-            ],
-            currentIndex: controller.selectedIndex.value,
-            fixedColor: Colors.blue,
-            onTap: _onNavTapped,
-          )),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          print("点击了图标按钮111");
-          //简单网络连通性测试：调用 httpbin 的 GET 接口
-          try {
-            final api = ApiMainService('https://httpbin.org');
-            final HttpBinGetResponse resp = await api.pingGetModel();
-            print("网络连通成功: url121=${resp.url}");
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("网络连通成功: ${resp.url}")),
-            );
-          } catch (e) {
-            print("网络异常: $e");
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("网络异常: $e")),
-            );
-          }
-
-        },
-        child: const Icon(Icons.add),
+      bottomNavigationBar: Obx(
+        () => BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: "首页"),
+            BottomNavigationBarItem(icon: Icon(Icons.business), label: "问答"),
+            BottomNavigationBarItem(icon: Icon(Icons.school), label: "公众号"),
+          ],
+          currentIndex: controller.selectedIndex.value,
+          fixedColor: Colors.blue,
+          onTap: _onNavTapped,
+        ),
       ),
       body: PageViewWidget(
         controller: _pageController,
@@ -91,8 +72,6 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
 }
 
 class MyDrawer extends StatelessWidget {
@@ -145,4 +124,3 @@ class MyDrawer extends StatelessWidget {
     );
   }
 }
-
