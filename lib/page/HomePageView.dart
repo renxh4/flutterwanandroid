@@ -99,7 +99,7 @@ class _HomePageViewState extends State<HomePageView> {
         SizedBox(width: 5,),
         Text(homeController.articleList[index].shareUser ?? "",style: TextStyle(fontSize: 14),),
         Spacer(),
-        Text("${DateTimeUtils.fromTimestamp(homeController.articleList[index].shareDate ?? 0)}"),
+        Text(DateTimeUtils.formatTimestamp(homeController.articleList[index].shareDate ?? 0),style: TextStyle(fontSize: 14),),
       ],
     );
   }

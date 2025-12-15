@@ -19,7 +19,7 @@ class DateTimeUtils {
   /// - [isUtc] 是否按 UTC 格式化
   static String formatTimestamp(
     int timestamp, {
-    String pattern = 'yyyy-MM-dd HH:mm:ss',
+    String pattern = 'yyyy-MM-dd HH:mm',
     String? locale,
     bool isUtc = false,
   }) {
