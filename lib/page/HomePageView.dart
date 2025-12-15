@@ -27,20 +27,17 @@ class _HomePageViewState extends State<HomePageView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      child: Column(
-        children: [
-          Container(
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: SizedBox(
             width: double.infinity,
             height: 200,
-            color: Colors.red,
             child: Obx(
               () => PageView.builder(
                 controller: _pageController,
                 itemCount: homeController.bannerList.length,
-                itemBuilder: (context, index) => Container(
+                itemBuilder: (context, index) => SizedBox(
                   width: double.infinity,
                   height: double.infinity,
                   child: Image.network(
@@ -53,34 +50,34 @@ class _HomePageViewState extends State<HomePageView> {
               ),
             ),
           ),
-          Expanded(
-            child: Obx(
-              () => ListView.builder(
-                itemCount: homeController.articleList.length,
-                itemBuilder: (context, index) => Container(
-                  padding: EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildRow(index),
-                      SizedBox(height: 8,),
-                      Text(homeController.articleList[index].title ?? "",style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 8,),
-                      Row(
-                        children: [
-                          Text(homeController.articleList[index].superChapterName ?? ""),
-                          Spacer(),
-                          Icon(Icons.heart_broken,size: 24,color: Colors.red,),
-                        ],
-                      ),
-                    ],
-                  ),
+        ),
+        Obx(
+          () => SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (context, index) => Container(
+                padding: EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildRow(index),
+                    SizedBox(height: 8,),
+                    Text(homeController.articleList[index].title ?? "",style: TextStyle(fontSize: 18)),
+                    SizedBox(height: 8,),
+                    Row(
+                      children: [
+                        Text(homeController.articleList[index].superChapterName ?? ""),
+                        Spacer(),
+                        Icon(Icons.heart_broken,size: 24,color: Colors.red,),
+                      ],
+                    ),
+                  ],
                 ),
               ),
+              childCount: homeController.articleList.length,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
