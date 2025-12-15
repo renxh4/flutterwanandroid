@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
 
 import '../controller/HomeController.dart';
 import '../utils/date_time_utils.dart';
+import 'webview_page.dart';
 
 class HomePageView extends StatefulWidget {
   const HomePageView({super.key});
@@ -68,32 +70,46 @@ class _HomePageViewState extends State<HomePageView> {
             ),
           ),
         ),
-        Obx(
-          () => SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => Container(
-                padding: EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    buildRow(index),
-                    SizedBox(height: 8,),
-                    Text(homeController.articleList[index].title ?? "",style: TextStyle(fontSize: 18)),
-                    SizedBox(height: 8,),
-                    Row(
-                      children: [
-                        Text(homeController.articleList[index].superChapterName ?? ""),
-                        Spacer(),
-                        Icon(Icons.heart_broken,size: 24,color: Colors.red,),
-                      ],
+        Obx(() => SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final item = homeController.articleList[index];
+                  final String url = item.link ?? '';
+                  final String title = item.title ?? '';
+                  return InkWell(
+                    onTap: () {
+                      if (url.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('无效的链接')),
+                        );
+                        return;
+                      }
+                      Get.to(() => WebViewPage(url: url, title: title));
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildRow(index),
+                          SizedBox(height: 8,),
+                          Text(title, style: TextStyle(fontSize: 18)),
+                          SizedBox(height: 8,),
+                          Row(
+                            children: [
+                              Text(item.superChapterName ?? ""),
+                              Spacer(),
+                              Icon(Icons.heart_broken,size: 24,color: Colors.red,),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  );
+                },
+                childCount: homeController.articleList.length,
               ),
-              childCount: homeController.articleList.length,
-            ),
-          ),
-        ),
+            )),
       ],
     );
   }

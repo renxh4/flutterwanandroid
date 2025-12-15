@@ -26,6 +26,7 @@ dependencies:
 
   # getx
   get: ^4.6.6
+  webview_flutter: ^4.8.0
 
 
 
