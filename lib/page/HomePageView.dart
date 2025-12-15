@@ -55,17 +55,51 @@ class _HomePageViewState extends State<HomePageView> {
           Expanded(
             child: Obx(
               () => ListView.builder(
-                itemCount: homeController.bannerList.length,
+                itemCount: homeController.articleList.length,
                 itemBuilder: (context, index) => Container(
-                  height: 50,
-                  color: Colors.red,
-                  child: Center(child: Text("$index")),
+                  padding: EdgeInsets.only(left: 15, right: 15, top: 8, bottom: 8),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      buildRow(index),
+                      SizedBox(height: 8,),
+                      Text(homeController.articleList[index].title ?? "",style: TextStyle(fontSize: 16)),
+                      SizedBox(height: 8,),
+                      Row(
+                        children: [
+                          Text(homeController.articleList[index].superChapterName ?? ""),
+                          Spacer(),
+                          Icon(Icons.heart_broken,size: 24,color: Colors.red,),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Row buildRow(int index) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.only(left: 2, right: 2,bottom: 1),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(3),
+            border: Border.all(color: Colors.red, width: 1),
+          ),
+          child: Text("新", style: TextStyle(color: Colors.red, fontSize: 10)),
+        ),
+        SizedBox(width: 5,),
+        Text(homeController.articleList[index].shareUser ?? "",style: TextStyle(fontSize: 14),),
+        Spacer(),
+        Text("${homeController.articleList[index].shareDate ?? ""}"),
+      ],
     );
   }
 }

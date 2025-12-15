@@ -4,6 +4,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 
 import '../model/BannerBean.dart';
+import '../model/article_models.dart';
 import '../network/ApiWanService.dart';
 
 class HomeController extends GetxController {
@@ -11,6 +12,8 @@ class HomeController extends GetxController {
   var selectedIndex = 0.obs;
 
   var bannerList = <BannerBean>[].obs;
+  var articleList = <Article>[].obs;
+
 
   void getBanner() async {
     var response = await ApiWanService.instance.banner();
@@ -19,9 +22,7 @@ class HomeController extends GetxController {
 
   void getArticleList() async {
     var response = await ApiWanService.instance.getArticleList();
-    response.data?.datas?.forEach((element) {
-      print(element.title);
-    });
+    articleList.value = response.data?.datas ?? [];
   }
 
 }
