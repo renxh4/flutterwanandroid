@@ -1,5 +1,10 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutterwanandroid/page/HomePageView.dart';
+
+const String pageViewHome = "首页";
+const String pageViewQa = "问答";
+const String pageViewWx = "公众号";
 
 class PageViewWidget extends StatelessWidget {
   const PageViewWidget({
@@ -17,9 +22,9 @@ class PageViewWidget extends StatelessWidget {
       controller: controller,
       onPageChanged: onPageChanged,
       children: const <Widget>[
-        _SimplePage(text: '首页'),
-        _SimplePage(text: '业务'),
-        _SimplePage(text: '学校'),
+        _SimplePage(text: pageViewHome),
+        _SimplePage(text: pageViewQa),
+        _SimplePage(text: pageViewWx),
       ],
     );
   }
@@ -34,8 +39,15 @@ class _SimplePage extends StatelessWidget{
   final String text;
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text(text, textScaleFactor: 5));
-
+    if (text == pageViewHome) {
+      return HomePageView();
+    } else if (text == pageViewQa) {
+      return const Center(child: Text(pageViewQa, textScaleFactor: 5));
+    } else if (text == pageViewWx) {
+      return const Center(child: Text(pageViewWx, textScaleFactor: 5));
+    } else {
+      return const Center(child: Text("未知页面", textScaleFactor: 5));
+    }
   }
 
 }

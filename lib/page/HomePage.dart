@@ -35,6 +35,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    controller.getBanner();
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -51,8 +57,8 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: Obx(() => BottomNavigationBar(
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: "首页"),
-              BottomNavigationBarItem(icon: Icon(Icons.business), label: "业务"),
-              BottomNavigationBarItem(icon: Icon(Icons.school), label: "学校"),
+              BottomNavigationBarItem(icon: Icon(Icons.business), label: "问答"),
+              BottomNavigationBarItem(icon: Icon(Icons.school), label: "公众号"),
             ],
             currentIndex: controller.selectedIndex.value,
             fixedColor: Colors.blue,
