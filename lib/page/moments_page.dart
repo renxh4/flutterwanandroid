@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:get/get.dart';
 
 import '../model/moment_models.dart';
-import '../services/moments_repository.dart';
 import 'webview_page.dart';
 
 class MomentsPage extends StatefulWidget {
@@ -12,44 +13,172 @@ class MomentsPage extends StatefulWidget {
   State<MomentsPage> createState() => _MomentsPageState();
 }
 
-class _MomentsPageState extends State<MomentsPage> {
-  final MomentsRepository _repo = MomentsRepository();
-  late Future<List<Moment>> _future;
+class _MomentsPageState extends State<MomentsPage> with SingleTickerProviderStateMixin {
+  late Future<void> _future;
+
+  // 数据分栏
+  List<Moment> _moments = <Moment>[];
+  List<Map<String, dynamic>> _boardMessages = <Map<String, dynamic>>[];
 
   @override
   void initState() {
     super.initState();
-    _future = _repo.load();
+    _future = _loadAll();
+  }
+
+  Future<void> _loadAll() async {
+    final String jsonStr = await rootBundle.loadString('assets/303379832_export.json');
+    final Map<String, dynamic> map = json.decode(jsonStr) as Map<String, dynamic>;
+    final List<dynamic> momentsRaw = (map['Moments'] as List<dynamic>?) ?? <dynamic>[];
+    _moments = momentsRaw.map((e) => Moment.fromJson(e as Map<String, dynamic>)).toList();
+    // 仅保留留言
+    _boardMessages = ((map['BoardMessages'] as List<dynamic>?) ?? <dynamic>[]).cast<Map<String, dynamic>>();
+
+    // 简单时间倒序（若存在 ISO8601）
+    _moments.sort((a, b) => (b.timestamp ?? '').compareTo(a.timestamp ?? ''));
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Moments')),
-      body: FutureBuilder<List<Moment>>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text('加载失败: ${snapshot.error}'));
-          }
-          final List<Moment> moments = snapshot.data ?? <Moment>[];
-          if (moments.isEmpty) {
-            return const Center(child: Text('暂无动态'));
-          }
-          return ListView.builder(
-            itemCount: moments.length,
-            itemBuilder: (context, index) {
-              final Moment m = moments[index];
-              return _MomentCard(moment: m);
-            },
-          );
-        },
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('QZone'),
+          bottom: const TabBar(
+            isScrollable: true,
+            tabs: [
+              Tab(text: '说说'),
+              Tab(text: '留言'),
+              Tab(text: '总结'),
+            ],
+          ),
+        ),
+        body: FutureBuilder<void>(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('加载失败: ${snapshot.error}'));
+            }
+            return TabBarView(
+              children: [
+                _buildMoments(),
+                _buildBoard(),
+                _buildSummary(),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
+
+  // Summary（按年统计说说数量）
+  Widget _buildSummary() {
+    if (_moments.isEmpty) return const Center(child: Text('暂无数据'));
+    final Map<String, List<Moment>> yearToList = _groupMomentsByYear();
+    final List<String> years = yearToList.keys.toList()
+      ..sort((a, b) => b.compareTo(a)); // 年份倒序
+    return ListView.builder(
+      itemCount: years.length,
+      itemBuilder: (context, index) {
+        final String year = years[index];
+        final List<Moment> list = yearToList[year] ?? <Moment>[];
+        return ExpansionTile(
+          leading: const Icon(Icons.timeline),
+          title: Text('$year 年'),
+          trailing: Text('${list.length} 条说说'),
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: list.length,
+              itemBuilder: (context, i) => _MomentCard(moment: list[i]),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Map<String, int> _countMomentsByYear() {
+    final Map<String, int> acc = <String, int>{};
+    for (final m in _moments) {
+      final String yearStr = _extractYear(m);
+      acc.update(yearStr, (v) => v + 1, ifAbsent: () => 1);
+    }
+    return acc;
+  }
+
+  Map<String, List<Moment>> _groupMomentsByYear() {
+    final Map<String, List<Moment>> map = <String, List<Moment>>{};
+    for (final m in _moments) {
+      final String year = _extractYear(m);
+      map.putIfAbsent(year, () => <Moment>[]).add(m);
+    }
+    return map;
+  }
+
+  String _extractYear(Moment m) {
+    final String? ts = m.timestamp;
+    final String? tt = m.timeText;
+    String? yearStr;
+    if (ts != null && ts.isNotEmpty) {
+      try {
+        final DateTime dt = DateTime.parse(ts);
+        yearStr = dt.year.toString();
+      } catch (_) {
+        // ignore parse error, fallback to timeText
+      }
+    }
+    if (yearStr == null && tt != null && tt.isNotEmpty) {
+      final RegExp zhYear = RegExp(r'(\d{4})年');
+      final RegExpMatch? m1 = zhYear.firstMatch(tt);
+      if (m1 != null) {
+        yearStr = m1.group(1);
+      } else {
+        final RegExp anyYear = RegExp(r'(\d{4})');
+        final RegExpMatch? m2 = anyYear.firstMatch(tt);
+        if (m2 != null) {
+          yearStr = m2.group(1);
+        }
+      }
+    }
+    return yearStr ?? '未知';
+  }
+
+  // Moment
+  Widget _buildMoments() {
+    if (_moments.isEmpty) return const Center(child: Text('暂无动态'));
+    return ListView.builder(
+      itemCount: _moments.length,
+      itemBuilder: (context, index) => _MomentCard(moment: _moments[index]),
+    );
+  }
+
+  // BoardMessage
+  Widget _buildBoard() {
+    if (_boardMessages.isEmpty) return const Center(child: Text('暂无留言'));
+    return ListView.builder(
+      itemCount: _boardMessages.length,
+      itemBuilder: (context, index) {
+        final m = _boardMessages[index];
+        final sender = (m['senderQQ'] ?? '').toString();
+        final content = (m['content'] ?? '').toString();
+        final timeText = (m['timeText'] ?? m['timestamp'] ?? '').toString();
+        return ListTile(
+          leading: const Icon(Icons.message_outlined),
+          title: Text(content),
+          subtitle: Text('$sender · $timeText'),
+        );
+      },
+    );
+  }
+
 }
 
 class _MomentCard extends StatelessWidget {
