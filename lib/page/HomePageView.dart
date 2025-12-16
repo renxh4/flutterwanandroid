@@ -29,7 +29,7 @@ class _HomePageViewState extends State<HomePageView> {
   void initState() {
     super.initState();
     homeController.getBanner();
-    homeController.getArticleList();
+    homeController.refreshArticles();
   }
   @override
   void dispose() {
@@ -44,12 +44,11 @@ class _HomePageViewState extends State<HomePageView> {
       controller: _controller,
       onRefresh: () async {
         homeController.getBanner();
-        homeController.getArticleList();
+        homeController.refreshArticles();
         _controller.refreshCompleted();
       },
-
       onLoading: () async {
-        print("加载更多");
+        homeController.loadMoreArticles();
         _controller.loadComplete();
       },
 

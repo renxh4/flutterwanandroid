@@ -13,16 +13,32 @@ class HomeController extends GetxController {
 
   var bannerList = <BannerBean>[].obs;
   var articleList = <Article>[].obs;
-
+  var currentPage = 0.obs;
+  var isOver = false.obs;
 
   void getBanner() async {
     var response = await ApiWanService.instance.banner();
     bannerList.value = response.data ?? [];
   }
 
-  void getArticleList() async {
-    var response = await ApiWanService.instance.getArticleList();
+  /// 首次/下拉刷新
+  Future<void> refreshArticles() async {
+    currentPage.value = 0;
+    isOver.value = false;
+    final response = await ApiWanService.instance.getArticleList(currentPage.value);
     articleList.value = response.data?.datas ?? [];
+    isOver.value = response.data?.over ?? true;
+  }
+
+  /// 上拉加载更多
+  Future<void> loadMoreArticles() async {
+    if (isOver.value) return;
+    final next = currentPage.value + 1;
+    final response = await ApiWanService.instance.getArticleList(next);
+    final List<Article> more = response.data?.datas ?? [];
+    articleList.addAll(more);
+    currentPage.value = next;
+    isOver.value = response.data?.over ?? true;
   }
 
 }

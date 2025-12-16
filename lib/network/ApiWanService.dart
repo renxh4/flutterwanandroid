@@ -22,9 +22,9 @@ abstract class ApiWanService {
   @GET("/banner/json")
   Future<BannerResponse> banner();
 
-
-  @GET("/article/list/0/json")
-  Future<ArticleListResponse> getArticleList();
+  /// page 由外部传入，生成 /article/list/{page}/json
+  @GET("/article/list/{page}/json")
+  Future<ArticleListResponse> getArticleList(@Path("page") int page);
 
 }
 

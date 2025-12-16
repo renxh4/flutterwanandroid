@@ -55,7 +55,7 @@ class _ApiWanService implements ApiWanService {
   }
 
   @override
-  Future<ArticleListResponse> getArticleList() async {
+  Future<ArticleListResponse> getArticleList(int page) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -67,7 +67,7 @@ class _ApiWanService implements ApiWanService {
     )
         .compose(
           _dio.options,
-          '/article/list/0/json',
+          '/article/list/${page}/json',
           queryParameters: queryParameters,
           data: _data,
         )
