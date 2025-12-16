@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutterwanandroid/page/HomePageView.dart';
+import 'package:flutterwanandroid/utils/KeepAliveWrapper.dart';
 
 const String pageViewHome = "首页";
 const String pageViewQa = "问答";
@@ -40,13 +41,13 @@ class _SimplePage extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
     if (text == pageViewHome) {
-      return HomePageView();
+      return KeepAliveWrapper(child: HomePageView());
     } else if (text == pageViewQa) {
-      return const Center(child: Text(pageViewQa, textScaleFactor: 5));
+      return KeepAliveWrapper(child: const Center(child: Text(pageViewQa, textScaleFactor: 5)));
     } else if (text == pageViewWx) {
-      return const Center(child: Text(pageViewWx, textScaleFactor: 5));
+      return KeepAliveWrapper(child: const Center(child: Text(pageViewWx, textScaleFactor: 5)));
     } else {
-      return const Center(child: Text("未知页面", textScaleFactor: 5));
+      return KeepAliveWrapper(child: const Center(child: Text("未知页面", textScaleFactor: 5)));
     }
   }
 
