@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutterwanandroid/page/HomePageView.dart';
 import 'package:flutterwanandroid/utils/KeepAliveWrapper.dart';
 
+import 'moments_page.dart';
+
 const String pageViewHome = "首页";
 const String pageViewQa = "问答";
 const String pageViewWx = "公众号";
@@ -43,7 +45,7 @@ class _SimplePage extends StatelessWidget{
     if (text == pageViewHome) {
       return KeepAliveWrapper(child: HomePageView());
     } else if (text == pageViewQa) {
-      return KeepAliveWrapper(child: const Center(child: Text(pageViewQa, textScaleFactor: 5)));
+      return KeepAliveWrapper(child: MomentsPage());
     } else if (text == pageViewWx) {
       return KeepAliveWrapper(child: const Center(child: Text(pageViewWx, textScaleFactor: 5)));
     } else {

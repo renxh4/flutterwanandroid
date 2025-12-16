@@ -46,6 +46,8 @@ flutter:
   generate: true
   assets:
     - assets/image/icon_resolution_ratio.png
+    - assets/303379832_export.json
+
 
 
 
